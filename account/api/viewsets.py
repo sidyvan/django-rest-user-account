@@ -25,8 +25,9 @@ class UserView(APIView):
         return Response(serializer.data)
 
 
-    def put(self, request, pk, format=None):
-        user = self.get_object(pk)
+    def put(self, request, *args, **kwargs):
+        pk =  self.kwargs.get('pk')
+        user = User.objects.get(pk=pk)
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()

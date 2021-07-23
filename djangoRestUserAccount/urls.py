@@ -7,5 +7,6 @@ from account.api.viewsets import UserView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', UserView.as_view()),
+    path('<int:pk>/',UserView.as_view()),
 
 ]
