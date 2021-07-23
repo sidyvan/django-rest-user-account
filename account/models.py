@@ -1,10 +1,16 @@
 from django.db import models
-
+from cpf_field.models import CPFField
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+from datetime import date
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 class MyUserManager(BaseUserManager):
@@ -40,18 +46,34 @@ class MyUserManager(BaseUserManager):
         return user
 
 
+
+
+
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
+
+    
+def validate_age(born):
+    age = calculate_age(born)
+    if age <= 18:  
+        raise ValidationError(_(' Com apenas %(age) s anos não é possível cadastrar.Aguarde até completar 18 anos'), 
+        params= {'age':age},) 
+    
 class User(AbstractBaseUser):
+    
     email = models.EmailField(
         verbose_name='Endereço de Email',
         max_length=255,
         unique=True,
     )
     fullName = models.CharField('Nome Completo', max_length=255)
-    birthDate = models.DateField('Data de Nascimento')
-    phone = models.CharField('Telefone', max_length=255,  blank=True)
-    document = models.CharField('CPF', max_length=255,   unique=True)
+    birthDate = models.DateField('Data de Nascimento', validators=[validate_age])
 
-
+    phone_regex = RegexValidator(regex=r'^(\(?\d{2}\)?\s)?(\d{4,5}\-\d{4})$', message="Entre com o formato correto do telefone Ex: (99) 99999-9999")
+    phone = models.CharField('Telefone', validators=[phone_regex], max_length=50)
+    document = CPFField('CPF', unique=True)
 
 
     is_active = models.BooleanField(default=True)
