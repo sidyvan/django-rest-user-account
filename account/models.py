@@ -57,7 +57,7 @@ def calculate_age(born):
     
 def validate_age(born):
     age = calculate_age(born)
-    if age <= 18:  
+    if age < 18:  
         raise ValidationError(_(' Com apenas %(age) s anos não é possível cadastrar.Aguarde até completar 18 anos'), 
         params= {'age':age},) 
     

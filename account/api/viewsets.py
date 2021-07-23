@@ -20,8 +20,8 @@ class UserView(APIView):
 
 
     def get(self, request, format=None):
-        snippets = User.objects.all()
-        serializer = UserSerializer(snippets, many=True)
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
 
