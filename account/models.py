@@ -8,7 +8,7 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth, password=None):
+    def create_user(self, email, birthDate, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -18,14 +18,14 @@ class MyUserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
-            date_of_birth=date_of_birth,
+            birthDate=birthDate,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, password=None):
+    def create_superuser(self, email, birthDate, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -33,7 +33,7 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             email,
             password=password,
-            date_of_birth=date_of_birth,
+            birthDate=birthDate,
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -42,18 +42,24 @@ class MyUserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField(
-        verbose_name='email address',
+        verbose_name='Endereço de Email',
         max_length=255,
         unique=True,
     )
-    date_of_birth = models.DateField()
+    fullName = models.CharField('Nome Completo', max_length=255)
+    birthDate = models.DateField('Data de Nascimento')
+    phone = models.CharField('Telefone', max_length=255,  blank=True)
+    document = models.CharField('CPF', max_length=255,   unique=True)
+
+
+
+
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth']
+    REQUIRED_FIELDS = ['birthDate']
 
     def __str__(self):
         return self.email
