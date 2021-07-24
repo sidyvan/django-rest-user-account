@@ -15,10 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 class MyUserManager(BaseUserManager):
     def create_user(self, email, birthDate, password=None):
-        """
-        Creates and saves a User with the given email, date of
-        birth and password.
-        """
+
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -32,10 +29,6 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, birthDate, password=None):
-        """
-        Creates and saves a superuser with the given email, date of
-        birth and password.
-        """
         user = self.create_user(
             email,
             password=password,
@@ -58,7 +51,7 @@ def calculate_age(born):
 def validate_age(born):
     age = calculate_age(born)
     if age < 18:  
-        raise ValidationError(_(' Com apenas %(age) s anos não é possível cadastrar.Aguarde até completar 18 anos'), 
+        raise ValidationError(_('Com apenas %(age) s anos não é possível cadastrar na API. Por favor retorne quanto completar 18 anos.'), 
         params= {'age':age},) 
     
 class User(AbstractBaseUser):
